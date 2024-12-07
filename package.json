@@ -3,15 +3,20 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon",
+    "debug": "DEBUG=* nodemon",
+    "dev": "node swaggerAutogen && nodemon index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "ucangun",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.8.4"
+    "mongoose": "^8.8.4",
+    "redoc-express": "^2.1.0",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1"
   }
 }

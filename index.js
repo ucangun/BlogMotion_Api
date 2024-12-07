@@ -37,13 +37,16 @@ app.all("/", (req, res) => {
   res.send({
     error: false,
     message: "Welcome to BlogMotion Api",
-    // documents: {
-    //   swagger: "/documents/swagger",
-    //   redoc: "/documents/redoc",
-    //   json: "/documents/json",
-    // },
+    documents: {
+      swagger: "/documents/swagger",
+      redoc: "/documents/redoc",
+      json: "/documents/json",
+    },
   });
 });
+
+// Routes:
+app.use(require("./src/routes"));
 
 /* ------------------------------------------------- */
 
