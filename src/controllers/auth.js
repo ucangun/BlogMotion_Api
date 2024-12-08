@@ -18,6 +18,24 @@ const blacklistToken = require("../helpers/blacklistFunctions");
 
 module.exports = {
   signup: async (req, res) => {
+    /*
+            #swagger.tags = ["Authentication"]
+            #swagger.summary = "Signup"
+            #swagger.description = 'Create a new user account and send a verification email.'
+            #swagger.parameters["body"] = {
+                in: "body",
+                required: true,
+                schema: {
+                    "username": "testUser",
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "test@example.com",
+                    "password": "password123"
+                }
+            }
+          
+        */
+
     const newUser = await User.create({
       username: req.body.username,
       firstName: req.body.firstName,
@@ -46,6 +64,17 @@ module.exports = {
   },
 
   verifyEmail: async (req, res) => {
+    /*
+            #swagger.tags = ["Authentication"]
+            #swagger.summary = "Verify Email"
+            #swagger.description = 'Verify a user’s email address using a token sent via email.'
+            #swagger.parameters["token"] = {
+                in: "query",
+                required: true,
+                description: "Verification token from email.",
+                type: "string"
+            }
+        */
     const { token } = req.query;
     if (!token) {
       return res.status(400).json({
@@ -84,13 +113,13 @@ module.exports = {
     /*
             #swagger.tags = ["Authentication"]
             #swagger.summary = "Login"
-            #swagger.description = 'Login with username (or email) and password for get Token and JWT.'
+            #swagger.description = 'Login with username (or email) and password to get Token and JWT.'
             #swagger.parameters["body"] = {
                 in: "body",
                 required: true,
                 schema: {
-                    "username": "test",
-                    "password": "1234",
+                    "username": "testUser",
+                    "password": "password123"
                 }
             }
         */
@@ -129,6 +158,17 @@ module.exports = {
   },
 
   logout: async (req, res) => {
+    /*
+            #swagger.tags = ["Authentication"]
+            #swagger.summary = "Logout"
+            #swagger.description = 'Logout user by deleting or blacklisting the token.'
+            #swagger.parameters["authorization"] = {
+                in: "header",
+                required: true,
+                description: "Authorization token in 'Bearer <token>' or 'Token <token>' format.",
+                type: "string"
+            }
+        */
     const auth = req.headers?.authorization || null;
 
     if (!auth) {
