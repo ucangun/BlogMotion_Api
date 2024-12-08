@@ -4,6 +4,7 @@
 /*                  BLOGMOTION API                   */
 /* ------------------------------------------------- */
 
+const scheduleBlacklistCleanup = require("./src/helpers/blacklistCleaner");
 const express = require("express");
 const app = express();
 
@@ -23,6 +24,9 @@ require("express-async-errors");
 // DB Connection
 const connectDB = require("./src/configs/dbConnection");
 connectDB();
+
+// Blacklist Cleaner
+scheduleBlacklistCleanup();
 
 /* ------------------------------------------------- */
 

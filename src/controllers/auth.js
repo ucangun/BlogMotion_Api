@@ -14,6 +14,7 @@ const CustomError = require("../errors/customError");
 const tokenHash = require("../helpers/tokenHash");
 const { createSendToken, signAccessToken } = require("../helpers/jwtFunctions");
 const sendMail = require("../helpers/sendMail");
+const blacklistToken = require("../helpers/blacklistFunctions");
 
 module.exports = {
   signup: async (req, res) => {
@@ -125,5 +126,54 @@ module.exports = {
 
     // JWT:
     createSendToken(user, 200, tokenData, res);
+  },
+
+  logout: async (req, res) => {
+    const auth = req.headers?.authorization || null;
+
+    if (!auth) {
+      return res.status(400).json({
+        status: "fail",
+        message:
+          "Authorization header is missing. Please provide a valid token.",
+      });
+    }
+
+    const [tokenType, tokenValue] = auth.split(" ");
+
+    if (!tokenValue) {
+      return res.status(400).json({
+        status: "fail",
+        message:
+          "Token value is missing. Ensure the format is 'Token <value>' or 'Bearer <value>'.",
+      });
+    }
+
+    switch (tokenType) {
+      case "Token":
+        const result = await Token.deleteOne({ token: tokenValue });
+
+        return res.status(result.deletedCount > 0 ? 200 : 404).json({
+          status: result.deletedCount > 0 ? "success" : "fail",
+          message:
+            result.deletedCount > 0
+              ? "Simple token deleted successfully. Logout completed."
+              : "Simple token not found. It may have already been logged out.",
+        });
+
+      case "Bearer":
+        await blacklistToken(tokenValue);
+
+        return res.status(200).json({
+          status: "success",
+          message: "JWT blacklisted successfully. Logout completed.",
+        });
+
+      default:
+        return res.status(400).json({
+          status: "fail",
+          message: `Unsupported token type '${tokenType}'. Use 'Token' or 'Bearer'.`,
+        });
+    }
   },
 };
