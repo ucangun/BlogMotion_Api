@@ -6,11 +6,11 @@
 
 const router = require("express").Router();
 
-// Auth:
-router.use("/auth", require("./auth"));
+const { signup, verifyEmail, login } = require("../controllers/auth");
 
-// document:
-router.use("/documents", require("./document"));
+router.post("/signup", signup);
+router.get("/verifyEmail", verifyEmail);
 
-/* -------------------------------------------- */
+router.post("/login", login);
+
 module.exports = router;
