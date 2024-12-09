@@ -4,10 +4,12 @@
 /*                  BLOGMOTION API                   */
 /* ------------------------------------------------- */
 
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const validatePassword = require("../helpers/validatePassword");
+const resetTokenHash = require("../helpers/resetTokenHash");
 
 const userSchema = new mongoose.Schema(
   {
@@ -68,6 +70,8 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
   { collection: "users", timestamps: true }
 );
@@ -87,6 +91,16 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = resetTokenHash(resetToken);
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 module.exports = mongoose.model("User", userSchema);
