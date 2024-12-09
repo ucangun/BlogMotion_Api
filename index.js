@@ -4,6 +4,7 @@
 /*                  BLOGMOTION API                   */
 /* ------------------------------------------------- */
 
+const cors = require("cors");
 const scheduleBlacklistCleanup = require("./src/helpers/blacklistCleaner");
 const express = require("express");
 const app = express();
@@ -31,6 +32,14 @@ scheduleBlacklistCleanup();
 /* ------------------------------------------------- */
 
 // Middlewares:
+
+// Cors
+const corsOptions = {
+  origin: process.env.CLIENT_URL,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 // Accept JSON:
 app.use(express.json());
