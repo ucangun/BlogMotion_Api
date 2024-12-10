@@ -246,6 +246,7 @@ module.exports = {
       res.status(200).json({
         status: "success",
         message: "Token sent to email!",
+        resetToken,
       });
     } catch (err) {
       user.passwordResetToken = undefined;
