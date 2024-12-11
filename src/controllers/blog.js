@@ -24,7 +24,16 @@ module.exports = {
             `
         */
 
-    const data = await res.getModelList(Blog);
+    const data = await res.getModelList(Blog, {}, [
+      {
+        path: "userId",
+        select: "firstName lastName image",
+      },
+      {
+        path: "categoryId",
+        select: "name",
+      },
+    ]);
 
     res.status(200).send({
       error: false,
@@ -61,7 +70,16 @@ module.exports = {
         */
 
     if (req.params.id) {
-      const data = await res.findOne({ _id: req.params.id });
+      const data = await Blog.findOne({ _id: req.params.id }).populate([
+        {
+          path: "userId",
+          select: "firstName lastName image",
+        },
+        {
+          path: "categoryId",
+          select: "name",
+        },
+      ]);
 
       res.status(200).send({
         error: false,

@@ -103,4 +103,16 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
+userSchema.virtual("author").get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
+
+userSchema.set("toJSON", {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret.id;
+    return ret;
+  },
+});
+
 module.exports = mongoose.model("User", userSchema);
