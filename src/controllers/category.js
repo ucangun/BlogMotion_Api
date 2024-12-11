@@ -6,6 +6,8 @@
 
 // Category Controller
 
+const Category = require("../models/category");
+
 module.exports = {
   list: async (req, res) => {
     /*    

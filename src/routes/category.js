@@ -15,7 +15,7 @@ const {
   read,
   update,
   delete: deleteCategory,
-} = require("../controllers/blog");
+} = require("../controllers/category");
 
 router.route("/").get(list).post(create);
 
