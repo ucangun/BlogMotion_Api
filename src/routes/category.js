@@ -5,26 +5,27 @@
 /* ------------------------------------------------- */
 
 const router = require("express").Router();
+const idValidation = require("../middlewares/idValidation");
 
 /* ------------------------------------------------- */
 
 const {
-  signup,
-  verifyEmail,
-  login,
-  logout,
-  forgotPassword,
-  resetPassword,
-} = require("../controllers/auth");
+  list,
+  create,
+  read,
+  update,
+  delete: deleteCategory,
+} = require("../controllers/blog");
 
-router.post("/signup", signup);
-router.get("/verify-email", verifyEmail);
+router.route("/").get(list).post(create);
 
-router.post("/login", login);
-router.get("/logout", logout);
-
-router.post("/forgotPassword", forgotPassword);
-router.patch("/reset-password/:token", resetPassword);
+router
+  .route("/:id")
+  .all(idValidation)
+  .get(read)
+  .put(update)
+  .patch(update)
+  .delete(deleteCategory);
 
 /* ------------------------------------------------- */
 
