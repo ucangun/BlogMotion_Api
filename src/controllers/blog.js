@@ -44,6 +44,9 @@ module.exports = {
         path: "categoryId",
         select: "name",
       },
+      {
+        path: "comments",
+      },
     ]);
 
     res.status(200).send({
@@ -89,6 +92,13 @@ module.exports = {
         {
           path: "categoryId",
           select: "name",
+        },
+        {
+          path: "comments",
+          populate: {
+            path: "userId",
+            select: "username firstName lastName image",
+          },
         },
       ]);
 

@@ -7,6 +7,7 @@
 // Comment Controller:
 
 const Comment = require("../models/comment");
+const Blog = require("../models/blog");
 
 module.exports = {
   list: async (req, res) => {
@@ -47,6 +48,12 @@ module.exports = {
         */
 
     const data = await Comment.create(req.body);
+
+    await Blog.findByIdAndUpdate(
+      req.body.blogId,
+      { $push: { comments: data._id } },
+      { new: true, runValidators: true }
+    );
 
     res.status(200).send({
       error: false,

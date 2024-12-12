@@ -20,6 +20,8 @@ module.exports = async (req, res, next) => {
         "userId"
       );
       req.user = tokenData ? tokenData.userId : null;
+
+      req.body.userId = req.user._id;
     } else if (tokenKey[0] == "Bearer") {
       // JWT
 
@@ -38,6 +40,7 @@ module.exports = async (req, res, next) => {
       }
 
       req.user = currentUser;
+      req.body.userId = currentUser._id;
     }
   }
   next();
