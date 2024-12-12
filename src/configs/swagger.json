@@ -180,16 +180,22 @@
     },
     "/auth/forgotPassword": {
       "post": {
-        "description": "",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Forgot Password",
+        "description": "Send a reset password token to the user’s registered email address.",
         "parameters": [
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "test@example.com"
                 }
               }
             }
@@ -207,10 +213,126 @@
     },
     "/auth/reset-password/{token}": {
       "patch": {
-        "description": "",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Reset Password",
+        "description": "Reset user password using a valid reset token.",
         "parameters": [
           {
             "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Password reset token provided in the URL."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "example": "newPassword123"
+                },
+                "passwordConfirm": {
+                  "type": "string",
+                  "example": "newPassword123"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List Users",
+        "description": "  You can use <u>filter[] & search[] & sort[] & page & limit</u> queries with endpoint.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=asc&sort[field2]=desc</b></li>   <li>URL/?<b>limit=10&page=1</b></li>  </ul>  ",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create User",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "User 1"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get Single User",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update User",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -218,20 +340,82 @@
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
-                "password": {
-                  "example": "any"
-                },
-                "passwordConfirm": {
-                  "example": "any"
+                "name": {
+                  "type": "string",
+                  "example": "User 1"
                 }
               }
             }
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete User",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update User",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "User 1"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
           "401": {
             "description": "Unauthorized"
           }
@@ -245,6 +429,18 @@
         ],
         "summary": "List Blogs",
         "description": "  You can use <u>filter[] & search[] & sort[] & page & limit</u> queries with endpoint.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=asc&sort[field2]=desc</b></li>   <li>URL/?<b>limit=10&page=1</b></li>  </ul>  ",
+        "parameters": [
+          {
+            "name": "author",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -348,6 +544,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "Blogs"
+        ],
+        "summary": "Delete Blog",
         "description": "",
         "parameters": [
           {
@@ -358,6 +558,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "401": {
             "description": "Unauthorized"
           }
@@ -511,6 +714,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Delete Category",
         "description": "",
         "parameters": [
           {
@@ -521,6 +728,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "401": {
             "description": "Unauthorized"
           }
@@ -752,6 +962,236 @@
         },
         "passwordResetExpires": {
           "type": "function"
+        }
+      }
+    },
+    "Blog": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "categoryId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "Category"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "title": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 125
+            }
+          }
+        },
+        "content": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 10000
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "default": {}
+          }
+        },
+        "isPublish": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "default": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "function"
+              },
+              "ref": {
+                "type": "string",
+                "example": "Comment"
+              }
+            }
+          }
+        },
+        "likes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "function"
+              },
+              "ref": {
+                "type": "string",
+                "example": "User"
+              }
+            }
+          }
+        },
+        "countOfVisitors": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "default": {
+              "type": "number",
+              "example": 0
+            }
+          }
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 50
+            }
+          }
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "blogId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "Blog"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "index": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "userId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "ref": {
+              "type": "string",
+              "example": "User"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "index": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "comment": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 1000
+            }
+          }
         }
       }
     }

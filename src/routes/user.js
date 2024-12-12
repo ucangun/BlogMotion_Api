@@ -14,8 +14,8 @@ const {
   create,
   read,
   update,
-  deleteCategory,
-} = require("../controllers/category");
+  deleteUser,
+} = require("../controllers/user");
 
 router.route("/").get(list).post(create);
 
@@ -25,7 +25,7 @@ router
   .get(read)
   .put(update)
   .patch(update)
-  .delete(deleteCategory);
+  .delete(deleteUser);
 
 /* ------------------------------------------------- */
 

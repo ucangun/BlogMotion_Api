@@ -4,15 +4,15 @@
 /*                  BLOGMOTION API                   */
 /* ------------------------------------------------- */
 
-// Category Controller
+// User Controller:
 
-const Category = require("../models/category");
+const User = require("../models/user");
 
 module.exports = {
   list: async (req, res) => {
     /*    
-            #swagger.tags = ["Categories"]
-            #swagger.summary = "List Categories"
+            #swagger.tags = ["Users"]
+            #swagger.summary = "List Users"
             #swagger.description = `
                 You can use <u>filter[] & search[] & sort[] & page & limit</u> queries with endpoint.
                 <ul> Examples:
@@ -24,29 +24,38 @@ module.exports = {
             `
         */
 
-    const data = await res.getModelList(Category);
+    const data = await res.getModelList(User, customFilter, [
+      {
+        path: "userId",
+        select: "username firstName lastName image",
+      },
+      {
+        path: "categoryId",
+        select: "name",
+      },
+    ]);
 
     res.status(200).send({
       error: false,
-      details: await res.getModelListDetails(Category),
+      details: await res.getModelListDetails(User, customFilter),
       data,
     });
   },
 
   create: async (req, res) => {
     /*
-            #swagger.tags = ["Categories"]
-            #swagger.summary = "Create Category"
+            #swagger.tags = ["Users"]
+            #swagger.summary = "Create User"
             #swagger.parameters['body'] = {
                 in: 'body',
                 required: true,
                 schema: {
-                    "name": "Category 1"
+                    "name": "User 1"
                 }
             }
         */
 
-    const data = await Category.create(req.body);
+    const data = await User.create(req.body);
 
     res.status(200).send({
       error: false,
@@ -56,24 +65,33 @@ module.exports = {
 
   read: async (req, res) => {
     /*
-            #swagger.tags = ["Categories"]
-            #swagger.summary = "Get Single Category"
+            #swagger.tags = ["Users"]
+            #swagger.summary = "Get Single User"
         */
 
     if (req.params.id) {
-      const data = await res.findOne({ _id: req.params.id });
+      const data = await User.findOne({ _id: req.params.id }).populate([
+        {
+          path: "userId",
+          select: "username firstName lastName image",
+        },
+        {
+          path: "categoryId",
+          select: "name",
+        },
+      ]);
 
       res.status(200).send({
         error: false,
-        details: await res.getModelListDetails(Category),
+        details: await res.getModelListDetails(User),
         data,
       });
     } else {
-      const data = await res.getModelList(Category);
+      const data = await res.getModelList(User);
 
       res.status(200).send({
         error: false,
-        details: await res.getModelListDetails(Category),
+        details: await res.getModelListDetails(User),
         data,
       });
     }
@@ -81,35 +99,35 @@ module.exports = {
 
   update: async (req, res) => {
     /*
-            #swagger.tags = ["Categories"]
-            #swagger.summary = "Update Category"
+            #swagger.tags = ["Users"]
+            #swagger.summary = "Update User"
             #swagger.parameters['body'] = {
                 in: 'body',
                 required: true,
                 schema: {
-                    "name": "Category 1"
+                    "name": "User 1"
                 }
             }
         */
 
-    const data = await Category.updateOne({ _id: req.params.id }, req.body, {
+    const data = await User.updateOne({ _id: req.params.id }, req.body, {
       runValidators: true,
     });
 
     res.status(200).send({
       error: false,
-      new: await Category.findOne({ _id: req.params.id }),
+      new: await User.findOne({ _id: req.params.id }),
       data,
     });
   },
 
-  deleteCategory: async (req, res) => {
+  deleteUser: async (req, res) => {
     /*
-            #swagger.tags = ["Categories"]
-            #swagger.summary = "Delete Category"
+            #swagger.tags = ["Users"]
+            #swagger.summary = "Delete User"
         */
 
-    const data = await Category.deleteOne({ _id: req.params.id });
+    const data = await User.deleteOne({ _id: req.params.id });
 
     res.status(200).send({
       error: !data.deletedCount,

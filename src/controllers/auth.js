@@ -219,6 +219,18 @@ module.exports = {
   },
 
   forgotPassword: async (req, res) => {
+    /*
+        #swagger.tags = ["Authentication"]
+        #swagger.summary = "Forgot Password"
+        #swagger.description = 'Send a reset password token to the user’s registered email address.'
+        #swagger.parameters["body"] = {
+            in: "body",
+            required: true,
+            schema: {
+                "email": "test@example.com"
+            }
+        }
+    */
     // 1) Get user based on POSTed email
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
@@ -261,6 +273,25 @@ module.exports = {
   },
 
   resetPassword: async (req, res) => {
+    /*
+        #swagger.tags = ["Authentication"]
+        #swagger.summary = "Reset Password"
+        #swagger.description = 'Reset user password using a valid reset token.'
+        #swagger.parameters["token"] = {
+            in: "path",
+            required: true,
+            description: "Password reset token provided in the URL.",
+            type: "string"
+        }
+        #swagger.parameters["body"] = {
+            in: "body",
+            required: true,
+            schema: {
+                "password": "newPassword123",
+                "passwordConfirm": "newPassword123"
+            }
+        }
+    */
     // 1) Get user based on the token
     const hashedToken = resetTokenHash(req.params.token);
 

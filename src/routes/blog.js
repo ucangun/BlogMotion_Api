@@ -14,7 +14,7 @@ const {
   create,
   read,
   update,
-  delete: deleteBlog,
+  deleteBlog,
 } = require("../controllers/blog");
 
 router.route("/").get(list).post(create);
