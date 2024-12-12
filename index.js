@@ -44,8 +44,11 @@ app.use(cors(corsOptions));
 // Accept JSON:
 app.use(express.json());
 
+// Check Authentication:
+app.use(require("./src/middlewares/authentication"));
+
 // Run Logger:
-app.use(require("./src/middlewares/logger"));
+// app.use(require("./src/middlewares/logger"));
 
 // res.getModelList():
 app.use(require("./src/middlewares/queryHandler"));

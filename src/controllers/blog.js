@@ -24,10 +24,17 @@ module.exports = {
             `
         */
 
-    const data = await res.getModelList(Blog, {}, [
+    let customFilter = {};
+    if (req.query?.author && req.user?._id.toString() === req.query.author) {
+      customFilter = { userId: req.query.author };
+    }
+
+    // console.log(customFilter);
+
+    const data = await res.getModelList(Blog, customFilter, [
       {
         path: "userId",
-        select: "firstName lastName image",
+        select: "username firstName lastName image",
       },
       {
         path: "categoryId",
@@ -37,7 +44,7 @@ module.exports = {
 
     res.status(200).send({
       error: false,
-      details: await res.getModelListDetails(Blog),
+      details: await res.getModelListDetails(Blog, customFilter),
       data,
     });
   },
@@ -73,7 +80,7 @@ module.exports = {
       const data = await Blog.findOne({ _id: req.params.id }).populate([
         {
           path: "userId",
-          select: "firstName lastName image",
+          select: "username firstName lastName image",
         },
         {
           path: "categoryId",
