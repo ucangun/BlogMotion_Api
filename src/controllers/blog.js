@@ -29,6 +29,10 @@ module.exports = {
       customFilter = { userId: req.query.author };
     }
 
+    if (req.query?.category) {
+      customFilter = { categoryId: req.query.category };
+    }
+
     // console.log(customFilter);
 
     const data = await res.getModelList(Blog, customFilter, [
