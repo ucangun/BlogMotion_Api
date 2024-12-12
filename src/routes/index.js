@@ -12,8 +12,10 @@ router.use("/auth", require("./auth"));
 router.use("/users", require("./user"));
 // Blogs:
 router.use("/blogs", require("./blog"));
-// Blogs:
+// Categories:
 router.use("/categories", require("./category"));
+// Comments:
+router.use("/comments", require("./comment"));
 
 // document:
 router.use("/documents", require("./document"));
