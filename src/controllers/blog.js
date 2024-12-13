@@ -7,6 +7,7 @@
 // Blog Controller:
 
 const Blog = require("../models/blog");
+const CustomError = require("../errors/customError");
 
 module.exports = {
   list: async (req, res) => {
@@ -102,6 +103,10 @@ module.exports = {
         },
       ]);
 
+      if (data) {
+        await data.incrementVisitors();
+      }
+
       res.status(200).send({
         error: false,
         details: await res.getModelListDetails(Blog),
@@ -153,6 +158,45 @@ module.exports = {
     res.status(200).send({
       error: !data.deletedCount,
       data,
+    });
+  },
+
+  addRemoveLike: async (req, res) => {
+    /*
+        #swagger.tags = ["Blogs"]
+        #swagger.summary = "Add or Remove Like from a Blog"
+        #swagger.description = "This endpoint allows a user to add or remove their like from a specific blog post."
+        #swagger.parameters['id'] = {
+            description: "ID of the blog post",
+            required: true,
+            type: "string",
+            in: "path"
+        }
+
+    */
+    const blogId = req.params.id;
+    const userId = req.user._id;
+
+    const blog = await Blog.findById(blogId);
+    if (!blog) {
+      throw new CustomError("Blog not found", 404);
+    }
+
+    const likeIndex = blog.likes.indexOf(userId);
+    if (likeIndex === -1) {
+      blog.likes.push(userId);
+    } else {
+      blog.likes.splice(likeIndex, 1);
+    }
+
+    await blog.save();
+
+    res.status(200).send({
+      error: false,
+      message: likeIndex === -1 ? "Like added" : "Like removed",
+      data: {
+        likesCount: blog.likes.length,
+      },
     });
   },
 };

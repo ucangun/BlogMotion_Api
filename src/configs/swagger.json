@@ -494,6 +494,44 @@
         }
       }
     },
+    "/blogs/{id}/postLike": {
+      "post": {
+        "tags": [
+          "Blogs"
+        ],
+        "summary": "Add or Remove Like from a Blog",
+        "description": "This endpoint allows a user to add or remove their like from a specific blog post.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the blog post"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/blogs/{id}": {
       "get": {
         "tags": [

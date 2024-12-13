@@ -15,9 +15,12 @@ const {
   read,
   update,
   deleteBlog,
+  addRemoveLike,
 } = require("../controllers/blog");
 
 router.route("/").get(list).post(create);
+
+router.post("/:id/postLike", idValidation, addRemoveLike);
 
 router
   .route("/:id")
