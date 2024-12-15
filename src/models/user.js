@@ -51,6 +51,16 @@ const userSchema = new mongoose.Schema(
       default: "default-avatar.jpg",
     },
 
+    bio: {
+      type: String,
+      trim: true,
+    },
+
+    city: {
+      type: String,
+      trim: true,
+    },
+
     isActive: {
       type: Boolean,
       default: true,
