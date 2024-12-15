@@ -117,10 +117,20 @@ userSchema.virtual("author").get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
+userSchema.virtual("notes", {
+  ref: "Notes",
+  localField: "_id",
+  foreignField: "userId",
+});
+
 userSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
     delete ret.id;
+    delete ret.password;
+    delete ret.passwordResetToken;
+    delete ret.passwordResetExpires;
+
     return ret;
   },
 });

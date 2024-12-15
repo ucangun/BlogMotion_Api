@@ -16,6 +16,8 @@ router.use("/blogs", require("./blog"));
 router.use("/categories", require("./category"));
 // Comments:
 router.use("/comments", require("./comment"));
+// Notes:
+router.use("/notes", require("./note"));
 
 // document:
 router.use("/documents", require("./document"));

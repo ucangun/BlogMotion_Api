@@ -4,15 +4,15 @@
 /*                  BLOGMOTION API                   */
 /* ------------------------------------------------- */
 
-// User Controller:
+// Note Controller:
 
-const User = require("../models/user");
+const Note = require("../models/note");
 
 module.exports = {
   list: async (req, res) => {
     /*    
-            #swagger.tags = ["Users"]
-            #swagger.summary = "List Users"
+            #swagger.tags = ["Notes"]
+            #swagger.summary = "List Notes"
             #swagger.description = `
                 You can use <u>filter[] & search[] & sort[] & page & limit</u> queries with endpoint.
                 <ul> Examples:
@@ -24,29 +24,29 @@ module.exports = {
             `
         */
 
-    const data = await res.getModelList(User);
+    const data = await res.getModelList(Note);
 
     res.status(200).send({
       error: false,
-      details: await res.getModelListDetails(User),
+      details: await res.getModelListDetails(Note),
       data,
     });
   },
 
   create: async (req, res) => {
     /*
-            #swagger.tags = ["Users"]
-            #swagger.summary = "Create User"
+            #swagger.tags = ["Notes"]
+            #swagger.summary = "Create Note"
             #swagger.parameters['body'] = {
                 in: 'body',
                 required: true,
                 schema: {
-                    "name": "User 1"
+                    "name": "Note 1"
                 }
             }
         */
 
-    const data = await User.create(req.body);
+    const data = await Note.create(req.body);
 
     res.status(200).send({
       error: false,
@@ -56,28 +56,24 @@ module.exports = {
 
   read: async (req, res) => {
     /*
-            #swagger.tags = ["Users"]
-            #swagger.summary = "Get Single User"
+            #swagger.tags = ["Notes"]
+            #swagger.summary = "Get Single Note"
         */
 
     if (req.params.id) {
-      const data = await User.findOne({ _id: req.params.id }).populate([
-        {
-          path: "notes",
-        },
-      ]);
+      const data = await Note.findOne({ _id: req.params.id });
 
       res.status(200).send({
         error: false,
-        details: await res.getModelListDetails(User),
+        details: await res.getModelListDetails(Note),
         data,
       });
     } else {
-      const data = await res.getModelList(User);
+      const data = await res.getModelList(Note);
 
       res.status(200).send({
         error: false,
-        details: await res.getModelListDetails(User),
+        details: await res.getModelListDetails(Note),
         data,
       });
     }
@@ -85,35 +81,35 @@ module.exports = {
 
   update: async (req, res) => {
     /*
-            #swagger.tags = ["Users"]
-            #swagger.summary = "Update User"
+            #swagger.tags = ["Notes"]
+            #swagger.summary = "Update Note"
             #swagger.parameters['body'] = {
                 in: 'body',
                 required: true,
                 schema: {
-                    "name": "User 1"
+                    "name": "Note 1"
                 }
             }
         */
 
-    const data = await User.updateOne({ _id: req.params.id }, req.body, {
+    const data = await Note.updateOne({ _id: req.params.id }, req.body, {
       runValidators: true,
     });
 
     res.status(200).send({
       error: false,
-      new: await User.findOne({ _id: req.params.id }),
+      new: await Note.findOne({ _id: req.params.id }),
       data,
     });
   },
 
-  deleteUser: async (req, res) => {
+  deleteNote: async (req, res) => {
     /*
-            #swagger.tags = ["Users"]
-            #swagger.summary = "Delete User"
+            #swagger.tags = ["Notes"]
+            #swagger.summary = "Delete Note"
         */
 
-    const data = await User.deleteOne({ _id: req.params.id });
+    const data = await Note.deleteOne({ _id: req.params.id });
 
     res.status(200).send({
       error: !data.deletedCount,
