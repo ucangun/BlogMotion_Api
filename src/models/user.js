@@ -127,10 +127,6 @@ userSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
     delete ret.id;
-    delete ret.password;
-    delete ret.passwordResetToken;
-    delete ret.passwordResetExpires;
-
     return ret;
   },
 });

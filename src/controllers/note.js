@@ -7,6 +7,7 @@
 // Note Controller:
 
 const Note = require("../models/note");
+const User = require("../models/user");
 
 module.exports = {
   list: async (req, res) => {
@@ -47,6 +48,12 @@ module.exports = {
         */
 
     const data = await Note.create(req.body);
+
+    await User.findByIdAndUpdate(
+      req.body.userId,
+      { $push: { notes: data._id } },
+      { new: true, runValidators: true }
+    );
 
     res.status(200).send({
       error: false,
