@@ -64,7 +64,7 @@ module.exports = {
       const data = await User.findOne({ _id: req.params.id }).populate([
         {
           path: "notes",
-          select: "content -_id -userId",
+          select: "content _id -userId",
         },
       ]);
 

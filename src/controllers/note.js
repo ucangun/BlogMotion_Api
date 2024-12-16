@@ -116,10 +116,31 @@ module.exports = {
             #swagger.summary = "Delete Note"
         */
 
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+      return res.status(404).send({
+        error: true,
+        message: "Note not found",
+      });
+    }
+
+    await User.findByIdAndUpdate(
+      note.userId,
+      { $pull: { notes: note._id } },
+      { new: true, runValidators: true }
+    );
+
     const data = await Note.deleteOne({ _id: req.params.id });
+    if (!data.deletedCount) {
+      return res.status(500).send({
+        error: true,
+        message: "Failed to delete the note",
+      });
+    }
 
     res.status(200).send({
-      error: !data.deletedCount,
+      error: false,
+      message: "Note deleted successfully",
       data,
     });
   },
