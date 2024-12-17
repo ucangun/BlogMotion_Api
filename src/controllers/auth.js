@@ -135,17 +135,20 @@ module.exports = {
     // 2) Check if user exists && password is correct
     const user = await User.findOne({ username });
 
+    // 3) Check if user isActive
+    if (!user.isActive) {
+      throw new CustomError(
+        "This account is not active. Please contact support for assistance.",
+        401
+      );
+    }
+
+    // 4) Compare  Password
     if (!user || !(await user.correctPassword(password, user.password))) {
       throw new CustomError("Incorrect email or password", 401);
     }
 
-    // 3) Check if user isActive
-    if (!user.isActive) {
-      throw new CustomError("This account is not active.", 401);
-    }
-
-    // 4) If everything ok, send token to client
-
+    // 5) If everything ok, send token to client
     // TOKEN:
     let tokenData = await Token.findOne({ userId: user._id });
     if (!tokenData)

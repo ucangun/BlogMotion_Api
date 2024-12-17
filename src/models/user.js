@@ -96,6 +96,11 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// userSchema.pre(/^find/, function (next) {
+//   this.find({ isActive: true });
+//   next();
+// });
+
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword

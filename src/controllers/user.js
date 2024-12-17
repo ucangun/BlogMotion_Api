@@ -137,7 +137,7 @@ module.exports = {
     #swagger.description = "Sets the active status of the logged-in user to false, effectively deactivating their account."
   */
 
-    await User.findByIdAndUpdate(req.user.id, { isActive: false });
+    await User.findByIdAndUpdate(req.user._id, { isActive: false });
 
     res.status(204).json({
       status: "success",

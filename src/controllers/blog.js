@@ -39,7 +39,8 @@ module.exports = {
     const data = await res.getModelList(Blog, customFilter, [
       {
         path: "userId",
-        select: "username firstName lastName image",
+        select: "username firstName lastName image isActive",
+        match: { isActive: true },
       },
       {
         path: "categoryId",
