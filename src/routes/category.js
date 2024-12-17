@@ -6,6 +6,7 @@
 
 const router = require("express").Router();
 const idValidation = require("../middlewares/idValidation");
+const permissions = require("../middlewares/permissions");
 
 /* ------------------------------------------------- */
 
@@ -16,6 +17,8 @@ const {
   update,
   deleteCategory,
 } = require("../controllers/category");
+
+router.use(permissions.isAdmin);
 
 router.route("/").get(list).post(create);
 

@@ -6,6 +6,7 @@
 
 const router = require("express").Router();
 const idValidation = require("../middlewares/idValidation");
+const permissions = require("../middlewares/permissions");
 
 /* ------------------------------------------------- */
 
@@ -17,15 +18,18 @@ const {
   deleteUser,
 } = require("../controllers/user");
 
-router.route("/").get(list).post(create);
+router
+  .route("/")
+  .get(permissions.isAdmin, list)
+  .post(permissions.isAdmin, create);
 
 router
   .route("/:id")
   .all(idValidation)
-  .get(read)
-  .put(update)
-  .patch(update)
-  .delete(deleteUser);
+  .get(permissions.isLogin, read)
+  .put(permissions.isLogin, update)
+  .patch(permissions.isLogin, update)
+  .delete(permissions.isLogin, deleteUser);
 
 /* ------------------------------------------------- */
 
