@@ -182,6 +182,10 @@ module.exports = {
       throw new CustomError("Blog not found", 404);
     }
 
+    if (blog.userId.toString() === userId.toString()) {
+      throw new CustomError("You cannot like your own blog", 400);
+    }
+
     const likeIndex = blog.likes.indexOf(userId);
     if (likeIndex === -1) {
       blog.likes.push(userId);
