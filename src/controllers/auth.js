@@ -93,7 +93,8 @@ module.exports = {
 
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id);
+    const user = await User.findOne({ _id: decoded.id });
+
     if (!user) {
       return res.status(404).json({
         status: "fail",
@@ -141,6 +142,10 @@ module.exports = {
 
     // 2) Check if user exists && password is correct
     const user = await User.findOne({ username });
+
+    if (!user.isVerified) {
+      throw new Error("Please verify your email before logging in", 401);
+    }
 
     // 3) Check if user isActive
     if (!user.isActive) {
