@@ -33,7 +33,7 @@ router
   .all(idValidation)
   .get(permissions.isLogin, read)
   .put(permissions.isAdmin, update)
-  .patch(permissions.isLogin, update)
+  .patch(permissions.isAdmin, update)
   .delete(permissions.isAdmin, deleteUser);
 
 /* ------------------------------------------------- */

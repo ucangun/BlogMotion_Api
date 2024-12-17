@@ -146,23 +146,31 @@ module.exports = {
   },
 
   updateMe: async (req, res) => {
-    // 1) Filtered out unwanted fields names that are not allowed to be updated
+    // 1) Filter out unwanted fields names that are not allowed to be updated
     const filteredBody = filterObj(req.body, "firstName", "email", "lastName");
 
-    // 2) Update user document
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
-      filteredBody,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    // 2) Find the user
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+
+    // 3) Update allowed fields
+    Object.keys(filteredBody).forEach((field) => {
+      user[field] = filteredBody[field];
+    });
+
+    // 4) Save the user (to trigger password hashing and other pre-save hooks)
+    await user.save();
 
     res.status(200).json({
       status: "success",
       data: {
-        user: updatedUser,
+        user,
       },
     });
   },
