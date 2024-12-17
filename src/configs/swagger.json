@@ -252,6 +252,37 @@
         }
       }
     },
+    "/users/deleteMe": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Deactivate User",
+        "description": "Sets the active status of the logged-in user to false, effectively deactivating their account.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/users/": {
       "get": {
         "tags": [

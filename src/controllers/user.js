@@ -8,6 +8,14 @@
 
 const User = require("../models/user");
 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
+
 module.exports = {
   list: async (req, res) => {
     /*    
@@ -119,6 +127,43 @@ module.exports = {
     res.status(200).send({
       error: !data.deletedCount,
       data,
+    });
+  },
+
+  deleteMe: async (req, res) => {
+    /*
+    #swagger.tags = ["Users"]
+    #swagger.summary = "Deactivate User"
+    #swagger.description = "Sets the active status of the logged-in user to false, effectively deactivating their account."
+  */
+
+    await User.findByIdAndUpdate(req.user.id, { isActive: false });
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  },
+
+  updateMe: async (req, res) => {
+    // 1) Filtered out unwanted fields names that are not allowed to be updated
+    const filteredBody = filterObj(req.body, "firstName", "email", "lastName");
+
+    // 2) Update user document
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      filteredBody,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        user: updatedUser,
+      },
     });
   },
 };

@@ -16,7 +16,12 @@ const {
   read,
   update,
   deleteUser,
+  updateMe,
+  deleteMe,
 } = require("../controllers/user");
+
+router.delete("/deleteMe", deleteMe);
+router.patch("/updateMe", updateMe);
 
 router
   .route("/")
@@ -27,9 +32,9 @@ router
   .route("/:id")
   .all(idValidation)
   .get(permissions.isLogin, read)
-  .put(permissions.isLogin, update)
+  .put(permissions.isAdmin, update)
   .patch(permissions.isLogin, update)
-  .delete(permissions.isLogin, deleteUser);
+  .delete(permissions.isAdmin, deleteUser);
 
 /* ------------------------------------------------- */
 
