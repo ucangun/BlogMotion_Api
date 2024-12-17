@@ -240,8 +240,9 @@ module.exports = {
       throw new CustomError("There is no user with email address.", 404);
     }
 
-    // 2) Generate the random reset token
+    // 2) Generate the random reset token and a verification code
     const resetToken = user.createPasswordResetToken();
+    const verificationCode = user.createVerificationCode();
     await user.save({ validateBeforeSave: false });
 
     // 3) Send it to user's email
@@ -249,27 +250,30 @@ module.exports = {
       "host"
     )}/auth/reset-password/${resetToken}`;
 
-    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+    const resetMessage = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+
+    const verificationMessage = `Your verification code is: ${verificationCode}. This code will expire in 10 minutes.`;
 
     try {
       await sendMail({
         email: user.email,
         subject: "Your password reset token (valid for 10 min)",
-        message,
+        message: `${resetMessage}\n\n${verificationMessage}`,
       });
 
       res.status(200).json({
         status: "success",
-        message: "Token sent to email!",
-        resetToken,
+        message: "Reset token and verification code sent to email!",
       });
     } catch (err) {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
+      user.verificationCode = undefined;
+      user.verificationCodeExpires = undefined;
       await user.save({ validateBeforeSave: false });
 
       throw new CustomError(
-        "There was an error sending the email. Try again later!",
+        "There was an error sending the reset token and verification code. Try again later!",
         500
       );
     }

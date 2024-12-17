@@ -82,6 +82,8 @@ const userSchema = new mongoose.Schema(
     },
     passwordResetToken: String,
     passwordResetExpires: Date,
+    verificationCode: Number,
+    verificationCodeExpires: Date,
   },
   { collection: "users", timestamps: true }
 );
@@ -116,6 +118,16 @@ userSchema.methods.createPasswordResetToken = function () {
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
+};
+
+userSchema.methods.createVerificationCode = function () {
+  const verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+  this.verificationCode = verificationCode;
+
+  this.verificationCodeExpires = Date.now() + 10 * 60 * 1000;
+
+  return verificationCode;
 };
 
 userSchema.virtual("author").get(function () {
