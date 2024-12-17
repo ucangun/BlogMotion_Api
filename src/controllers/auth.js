@@ -19,7 +19,10 @@ const {
 } = require("../helpers/jwtFunctions");
 const sendMail = require("../helpers/sendMail");
 const blacklistToken = require("../helpers/blacklistFunctions");
-const resetTokenHash = require("../helpers/resetTokenHash");
+const { signupEmailTemplate } = require("../utils/emailTemplates/signupEmail");
+const {
+  forgotPasswordEmailTemplate,
+} = require("../utils/emailTemplates/forgotPasswordEmail");
 
 module.exports = {
   signup: async (req, res) => {
@@ -54,7 +57,7 @@ module.exports = {
 
     const verificationUrl = `${process.env.CLIENT_URL}/auth/verify-email?token=${verificationToken}`;
 
-    const message = `Welcome to our application! Please verify your email by clicking the following link: \n\n ${verificationUrl}`;
+    const message = signupEmailTemplate(newUser.username, verificationUrl);
 
     await sendMail({
       email: newUser.email,
@@ -260,22 +263,25 @@ module.exports = {
     );
 
     // Reset URL with JWT
-    const resetURL = `${req.protocol}://${req.get(
-      "host"
-    )}/auth/reset-password/${jwtResetToken}`;
+    const resetURL = `http://localhost:5173/auth/reset-password/${jwtResetToken}`;
 
-    const verificationMessage = `Your verification code is: ${verificationCode}. This code will expire in 10 minutes.`;
+    const message = forgotPasswordEmailTemplate(
+      user.username,
+      verificationCode,
+      resetURL
+    );
 
     try {
       await sendMail({
         email: user.email,
         subject: "Your password reset token (valid for 10 min)",
-        message: `Submit a PATCH request to: ${resetURL}\n\n${verificationMessage}`,
+        message,
       });
 
       res.status(200).json({
         status: "success",
         message: "Reset token and verification code sent to email!",
+        jwtResetToken,
       });
     } catch (err) {
       console.error("Error in forgotPassword:", err);
@@ -297,7 +303,7 @@ module.exports = {
     /*
         #swagger.tags = ["Authentication"]
         #swagger.summary = "Reset Password"
-        #swagger.description = 'Reset user password using a valid reset token.'
+        #swagger.description = 'Reset user password using a valid reset token and verification code.'
         #swagger.parameters["token"] = {
             in: "path",
             required: true,
@@ -309,40 +315,54 @@ module.exports = {
             required: true,
             schema: {
                 "password": "newPassword123",
-                "passwordConfirm": "newPassword123"
+                "passwordConfirm": "newPassword123",
+                "verificationCode": "123456"
             }
         }
     */
 
     // 1) Validate token
-    const decodedToken = jwt.verify(req.params.token, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(
+      req.params.token,
+      process.env.JWT_RESET_SECRET
+    );
     if (!decodedToken || !decodedToken.id) {
       throw new CustomError("Invalid or expired token", 400);
     }
 
     // 2) Validate new password and password confirmation
-    const { password, passwordConfirm } = req.body;
-    if (!password || !passwordConfirm) {
-      throw new CustomError("Password and passwordConfirm are required", 400);
+    const { password, confirmPassword, verificationCode } = req.body;
+    if (!password || !confirmPassword || !verificationCode) {
+      throw new CustomError(
+        "Password, passwordConfirm, and verificationCode are required",
+        400
+      );
     }
-    if (password !== passwordConfirm) {
+    if (password !== confirmPassword) {
       throw new CustomError("Passwords do not match", 400);
     }
 
-    // 3) Find user by decoded token id
+    // 3) Find user by decoded token id and check if the verification code is correct
     const user = await User.findOne({
       _id: decodedToken.id,
       passwordResetExpires: { $gt: Date.now() },
     });
+
     if (!user) {
       throw new CustomError("Token is invalid or has expired", 400);
     }
 
+    if (user.verificationCode != verificationCode) {
+      throw new CustomError("Invalid verification code", 400);
+    }
+
     // 4) Update user's password
     user.password = password;
-    user.passwordConfirm = passwordConfirm;
+    user.confirmPassword = confirmPassword;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
+    user.verificationCode = undefined;
+    user.verificationCodeExpires = undefined;
     await user.save();
 
     // 5) Send response
