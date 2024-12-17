@@ -18,6 +18,16 @@ const signRefreshToken = (id) => {
   });
 };
 
+const signResetToken = (id, resetToken, verificationCode) => {
+  return jwt.sign(
+    { id, resetToken, verificationCode },
+    process.env.JWT_RESET_SECRET,
+    {
+      expiresIn: process.env.JWT_RESET_EXPIRES_IN,
+    }
+  );
+};
+
 const createSendToken = (user, statusCode, tokenData, res) => {
   const accessToken = signAccessToken(user._id);
   const refreshToken = signRefreshToken(user._id);
@@ -36,4 +46,9 @@ const createSendToken = (user, statusCode, tokenData, res) => {
   });
 };
 
-module.exports = { signAccessToken, signRefreshToken, createSendToken };
+module.exports = {
+  signAccessToken,
+  signRefreshToken,
+  signResetToken,
+  createSendToken,
+};

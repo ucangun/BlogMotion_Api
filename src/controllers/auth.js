@@ -12,7 +12,11 @@ const User = require("../models/user");
 const Token = require("../models/token");
 const CustomError = require("../errors/customError");
 const tokenHash = require("../helpers/tokenHash");
-const { createSendToken, signAccessToken } = require("../helpers/jwtFunctions");
+const {
+  createSendToken,
+  signAccessToken,
+  signResetToken,
+} = require("../helpers/jwtFunctions");
 const sendMail = require("../helpers/sendMail");
 const blacklistToken = require("../helpers/blacklistFunctions");
 const resetTokenHash = require("../helpers/resetTokenHash");
@@ -234,23 +238,31 @@ module.exports = {
             }
         }
     */
+
+    const { email } = req.body;
+
     // 1) Get user based on POSTed email
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email });
     if (!user) {
       throw new CustomError("There is no user with email address.", 404);
     }
 
-    // 2) Generate the random reset token and a verification code
+    // 2) Generate resetToken and verificationCode
     const resetToken = user.createPasswordResetToken();
     const verificationCode = user.createVerificationCode();
     await user.save({ validateBeforeSave: false });
 
-    // 3) Send it to user's email
+    // Generate JWT token with resetToken and verificationCode
+    const jwtResetToken = signResetToken(
+      user._id,
+      resetToken,
+      verificationCode
+    );
+
+    // Reset URL with JWT
     const resetURL = `${req.protocol}://${req.get(
       "host"
-    )}/auth/reset-password/${resetToken}`;
-
-    const resetMessage = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+    )}/auth/reset-password/${jwtResetToken}`;
 
     const verificationMessage = `Your verification code is: ${verificationCode}. This code will expire in 10 minutes.`;
 
@@ -258,7 +270,7 @@ module.exports = {
       await sendMail({
         email: user.email,
         subject: "Your password reset token (valid for 10 min)",
-        message: `${resetMessage}\n\n${verificationMessage}`,
+        message: `Submit a PATCH request to: ${resetURL}\n\n${verificationMessage}`,
       });
 
       res.status(200).json({
@@ -266,6 +278,8 @@ module.exports = {
         message: "Reset token and verification code sent to email!",
       });
     } catch (err) {
+      console.error("Error in forgotPassword:", err);
+
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       user.verificationCode = undefined;
@@ -299,38 +313,42 @@ module.exports = {
             }
         }
     */
-    // 1) Get user based on the token
-    const hashedToken = resetTokenHash(req.params.token);
 
+    // 1) Validate token
+    const decodedToken = jwt.verify(req.params.token, process.env.JWT_SECRET);
+    if (!decodedToken || !decodedToken.id) {
+      throw new CustomError("Invalid or expired token", 400);
+    }
+
+    // 2) Validate new password and password confirmation
+    const { password, passwordConfirm } = req.body;
+    if (!password || !passwordConfirm) {
+      throw new CustomError("Password and passwordConfirm are required", 400);
+    }
+    if (password !== passwordConfirm) {
+      throw new CustomError("Passwords do not match", 400);
+    }
+
+    // 3) Find user by decoded token id
     const user = await User.findOne({
-      passwordResetToken: hashedToken,
+      _id: decodedToken.id,
       passwordResetExpires: { $gt: Date.now() },
     });
-
-    // 2) If token has not expired, and there is user, set the new password
     if (!user) {
       throw new CustomError("Token is invalid or has expired", 400);
     }
 
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
+    // 4) Update user's password
+    user.password = password;
+    user.passwordConfirm = passwordConfirm;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
 
-    // 3) Update changedPasswordAt property for the user (handled in user model middleware)
-
-    // 4) Log the user in, send Token
-
-    // TOKEN:
-    let tokenData = await Token.findOne({ userId: user._id });
-    if (!tokenData)
-      tokenData = await Token.create({
-        userId: user._id,
-        token: tokenHash(user._id + Date.now()),
-      });
-
-    // JWT:
-    createSendToken(user, 200, tokenData, res);
+    // 5) Send response
+    res.status(200).json({
+      status: "success",
+      message: "Password has been reset successfully!",
+    });
   },
 };
