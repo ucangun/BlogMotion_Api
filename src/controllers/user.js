@@ -133,7 +133,7 @@ module.exports = {
   deleteMe: async (req, res) => {
     /*
     #swagger.tags = ["Users"]
-    #swagger.summary = "Deactivate User"
+    #swagger.summary = "Deactivate Current User"
     #swagger.description = "Sets the active status of the logged-in user to false, effectively deactivating their account."
   */
 
@@ -146,6 +146,11 @@ module.exports = {
   },
 
   updateMe: async (req, res) => {
+    /*
+    #swagger.tags = ["Users"]
+    #swagger.summary = "Update Current User"
+   
+  */
     // 1) Filter out unwanted fields names that are not allowed to be updated
     const filteredBody = filterObj(req.body, "firstName", "email", "lastName");
 

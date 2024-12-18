@@ -264,7 +264,7 @@
         "tags": [
           "Users"
         ],
-        "summary": "Deactivate User",
+        "summary": "Deactivate Current User",
         "description": "Sets the active status of the logged-in user to false, effectively deactivating their account.",
         "parameters": [
           {
@@ -292,6 +292,10 @@
     },
     "/users/updateMe": {
       "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update Current User",
         "description": "",
         "parameters": [
           {
