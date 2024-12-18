@@ -73,6 +73,9 @@ app.all("/", (req, res) => {
 // Routes:
 app.use(require("./src/routes/index"));
 
+// Payment Route:
+app.use("/api/payment", require("./src/routes/payment"));
+
 /* ------------------------------------------------- */
 
 // errorHandler:
