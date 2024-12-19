@@ -192,15 +192,22 @@ module.exports = {
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
 
-    res.status(200).json({
-      error: "false",
-      token: tokenData.token,
+    const data = {
+      error: false,
+      message: "You are successfully logged in!",
       bearer: {
-        accessToken,
-        refreshToken,
+        access: accessToken,
+        refresh: refreshToken,
       },
+      token: tokenData.token,
       user,
-    });
+    };
+
+    res.redirect(
+      `${process.env.CLIENT_URL}/auth/success?user=${encodeURIComponent(
+        JSON.stringify(data)
+      )}`
+    );
   },
 
   logout: async (req, res) => {
