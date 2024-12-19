@@ -174,20 +174,21 @@ module.exports = {
   },
 
   authSuccess: async (req, res) => {
-    const user = req.user; // Passport tarafından doğrulanan kullanıcı bilgisi
-    const token = createJWT(user); // JWT token'ı oluştur
+    const user = req.user;
 
-    // Kullanıcıyı veya token'ı frontend'e gönder
-    res.status(200).json({
-      success: true,
-      message: "Google authentication successful",
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-      },
-      token, // JWT token (Frontend için)
-    });
+    if (!user) {
+      return res.redirect(`${process.env.CLIENT_URL}/auth/failure`);
+    }
+    // TOKEN:
+    let tokenData = await Token.findOne({ userId: user._id });
+    if (!tokenData)
+      tokenData = await Token.create({
+        userId: user._id,
+        token: tokenHash(user._id + Date.now()),
+      });
+
+    // JWT:
+    createSendToken(user, 200, tokenData, res);
   },
 
   logout: async (req, res) => {
