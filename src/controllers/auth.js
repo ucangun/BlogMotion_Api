@@ -16,6 +16,7 @@ const {
   createSendToken,
   signAccessToken,
   signResetToken,
+  signRefreshToken,
 } = require("../helpers/jwtFunctions");
 const sendMail = require("../helpers/sendMail");
 const blacklistToken = require("../helpers/blacklistFunctions");
@@ -188,7 +189,18 @@ module.exports = {
       });
 
     // JWT:
-    createSendToken(user, 200, tokenData, res);
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+
+    res.status(200).json({
+      error: "false",
+      token: tokenData.token,
+      bearer: {
+        accessToken,
+        refreshToken,
+      },
+      user,
+    });
   },
 
   logout: async (req, res) => {
