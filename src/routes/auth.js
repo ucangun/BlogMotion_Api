@@ -5,6 +5,7 @@
 /* ------------------------------------------------- */
 
 const router = require("express").Router();
+const passport = require("passport");
 
 /* ------------------------------------------------- */
 
@@ -15,6 +16,7 @@ const {
   logout,
   forgotPassword,
   resetPassword,
+  authSuccess,
 } = require("../controllers/auth");
 
 router.post("/signup", signup);
@@ -25,6 +27,23 @@ router.get("/logout", logout);
 
 router.post("/forgotPassword", forgotPassword);
 router.patch("/reset-password/:token", resetPassword);
+
+// Google authentication routes
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: true,
+    failureRedirect: `${process.env.CLIENT_URL}/auth/failure`,
+  }),
+  authSuccess
+);
 
 /* ------------------------------------------------- */
 

@@ -7,6 +7,7 @@
 const cors = require("cors");
 const scheduleBlacklistCleanup = require("./src/helpers/blacklistCleaner");
 const express = require("express");
+const session = require("express-session");
 const app = express();
 
 /* ------------------------------------------------- */
@@ -52,6 +53,11 @@ app.use(require("./src/middlewares/authentication"));
 
 // res.getModelList():
 app.use(require("./src/middlewares/queryHandler"));
+
+/* ------------------------------------------------- */
+
+// Passportjs Authentication Config
+// require("./src/configs/passportjs-auth/passportConfig");
 
 /* ------------------------------------------------- */
 

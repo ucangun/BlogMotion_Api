@@ -173,6 +173,23 @@ module.exports = {
     createSendToken(user, 200, tokenData, res);
   },
 
+  authSuccess: async (req, res) => {
+    const user = req.user; // Passport tarafından doğrulanan kullanıcı bilgisi
+    const token = createJWT(user); // JWT token'ı oluştur
+
+    // Kullanıcıyı veya token'ı frontend'e gönder
+    res.status(200).json({
+      success: true,
+      message: "Google authentication successful",
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+      },
+      token, // JWT token (Frontend için)
+    });
+  },
+
   logout: async (req, res) => {
     /*
             #swagger.tags = ["Authentication"]
