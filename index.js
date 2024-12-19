@@ -8,6 +8,8 @@ const cors = require("cors");
 const scheduleBlacklistCleanup = require("./src/helpers/blacklistCleaner");
 const express = require("express");
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const MongoStore = require("connect-mongo");
 const app = express();
 
 /* ------------------------------------------------- */
@@ -42,6 +44,30 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+/* ------------------------------------------------- */
+
+// Passportjs Authentication Config
+require("./src/configs/passportjs-auth/passportConfig");
+app.use(cookieParser());
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true,
+      secure: process.env.NODE_ENV,
+    },
+  })
+);
+
+/* ------------------------------------------------- */
+
 // Accept JSON:
 app.use(express.json());
 
@@ -53,11 +79,6 @@ app.use(require("./src/middlewares/authentication"));
 
 // res.getModelList():
 app.use(require("./src/middlewares/queryHandler"));
-
-/* ------------------------------------------------- */
-
-// Passportjs Authentication Config
-require("./src/configs/passportjs-auth/passportConfig");
 
 /* ------------------------------------------------- */
 

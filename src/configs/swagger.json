@@ -1354,6 +1354,18 @@
     "User": {
       "type": "object",
       "properties": {
+        "googleId": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
         "username": {
           "type": "object",
           "properties": {
@@ -1383,8 +1395,7 @@
               "type": "function"
             },
             "required": {
-              "type": "boolean",
-              "example": true
+              "type": "function"
             },
             "validate": {
               "type": "object",

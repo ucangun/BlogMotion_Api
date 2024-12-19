@@ -39,7 +39,7 @@ router.get(
 router.get(
   "/oauth2/callback/google",
   passport.authenticate("google", {
-    // session: true,
+    session: true,
     failureRedirect: `${process.env.CLIENT_URL}/auth/failure`,
   }),
   authSuccess
