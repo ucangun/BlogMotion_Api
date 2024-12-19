@@ -23,12 +23,12 @@ passport.use(
         // If the user exists, we update their information
         if (user) {
           user.googleId = profile.id;
-          user.firstName = profile.name.givenName || user.firstName;
-          user.lastName = profile.name.familyName || user.lastName;
-          user.image = profile.photos ? profile.photos[0].value : user.image;
+          user.firstName = user.firstName;
+          user.lastName = user.lastName;
+          user.image = user.image ? user.image : profile.photos[0].value;
 
           await user.save();
-          return done(null, user); // Use 'done' here to return the user
+          return done(null, user);
         }
 
         let username =
@@ -48,9 +48,9 @@ passport.use(
         });
 
         await user.save();
-        return done(null, user); // Use 'done' to return the newly created user
+        return done(null, user);
       } catch (err) {
-        return done(err); // Use 'done' to return errors
+        return done(err);
       }
     }
   )
