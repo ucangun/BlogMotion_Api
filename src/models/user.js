@@ -13,6 +13,8 @@ const resetTokenHash = require("../helpers/resetTokenHash");
 
 const userSchema = new mongoose.Schema(
   {
+    googleId: { type: String, unique: true },
+
     username: {
       type: String,
       required: [true, "Username is required"],
@@ -21,7 +23,9 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      required: function () {
+        return this.googleId ? false : true;
+      },
       validate: {
         validator: validatePassword,
         message:

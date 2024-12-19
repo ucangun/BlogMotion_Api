@@ -57,7 +57,7 @@ app.use(require("./src/middlewares/queryHandler"));
 /* ------------------------------------------------- */
 
 // Passportjs Authentication Config
-// require("./src/configs/passportjs-auth/passportConfig");
+require("./src/configs/passportjs-auth/passportConfig");
 
 /* ------------------------------------------------- */
 
