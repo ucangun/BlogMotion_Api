@@ -7,12 +7,14 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:8000/auth/oauth2/callback/google",
+      callbackURL: `${
+        process.env.SERVER_URL || process.env.LOCAL_SERVER_URL
+      }/auth/oauth2/callback/google`,
     },
     async (accessToken, refreshToken, profile, done) => {
       // 'done' is passed here as the callback
       try {
-        console.log("Google Profile: ", profile);
+        // console.log("Google Profile: ", profile);
         const email = profile.emails[0].value;
 
         // First, check if the user already exists in the database using Google ID or email

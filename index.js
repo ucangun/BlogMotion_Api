@@ -38,7 +38,7 @@ scheduleBlacklistCleanup();
 
 // Cors
 const corsOptions = {
-  origin: process.env.CLIENT_URL,
+  origin: [process.env.LOCAL_CLIENT_URL, process.env.CLIENT_URL],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true,
 };
