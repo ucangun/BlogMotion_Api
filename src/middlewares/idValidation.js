@@ -5,7 +5,7 @@
 /* ------------------------------------------------- */
 
 const mongoose = require("mongoose");
-const { CustomError } = require("../errors/customError");
+const CustomError = require("../errors/customError");
 
 module.exports = (req, res, next) => {
   const idIsValid = mongoose.Types.ObjectId.isValid(req.params.id); //* built-in method
