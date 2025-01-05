@@ -8,6 +8,7 @@
 
 const Blog = require("../models/blog");
 const CustomError = require("../errors/customError");
+const { default: redocExpressMiddleware } = require("redoc-express");
 
 module.exports = {
   list: async (req, res) => {
@@ -26,7 +27,7 @@ module.exports = {
         */
 
     let customFilter = {};
-    if (req.query?.author && req.user?._id.toString() === req.query.author) {
+    if (req.query?.author && req.query.author === "6757ffcfe5ac66a45aadba94") {
       customFilter = { userId: req.query.author };
     }
 

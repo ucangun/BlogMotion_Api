@@ -5,6 +5,37 @@ const Stripe = require("stripe");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 router.post("/create-checkout-session", async (req, res) => {
+  /*
+    #swagger.tags = ["Stripe Checkout"]
+    #swagger.summary = "Create Checkout Session"
+    #swagger.description = 'Creates a Stripe Checkout session for processing a newsletter subscription payment.'
+    #swagger.parameters["body"] = {
+        in: "body",
+        required: true,
+        schema: {
+            "email": "user@example.com"
+        }
+    }
+    #swagger.responses[200] = {
+        description: "Successful creation of the Stripe Checkout session.",
+        schema: {
+            sessionId: "cs_test_a1b2c3d4e5f6g7h8i9j0k"
+        }
+    }
+    #swagger.responses[400] = {
+        description: "Bad Request, missing or invalid parameters.",
+        schema: {
+            error: "Email is required"
+        }
+    }
+    #swagger.responses[500] = {
+        description: "Server error while creating Stripe session.",
+        schema: {
+            error: "Failed to create payment session"
+        }
+    }
+*/
+
   const { email } = req.body;
 
   if (!email) {
