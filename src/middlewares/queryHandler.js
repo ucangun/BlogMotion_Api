@@ -27,8 +27,10 @@ module.exports = (req, res, next) => {
 
   // URL?sort[key1]=asc&sort[key2]=desc
   // asc: A-Z - desc: Z-A
-  const sort = req.query?.sort || {};
+  let sort = req.query?.sort || {};
   // console.log(sort)
+
+  sort = { createdAt: -1 };
 
   // ### PAGINATION ###
 
