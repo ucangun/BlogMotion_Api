@@ -152,10 +152,10 @@ module.exports = {
    
   */
     // 1) Filter out unwanted fields names that are not allowed to be updated
-    const filteredBody = filterObj(req.body, "firstName", "email", "lastName");
+    const filteredBody = filterObj(req.body, "image", "city", "bio");
 
     // 2) Find the user
-    const user = await User.findById(req.user._id);
+    const user = await User.findOne({ _id: req.user._id });
 
     if (!user) {
       return res.status(404).json({
@@ -170,13 +170,11 @@ module.exports = {
     });
 
     // 4) Save the user (to trigger password hashing and other pre-save hooks)
-    await user.save();
+    const updatedUser = await user.save();
 
     res.status(200).json({
       status: "success",
-      data: {
-        user,
-      },
+      updatedUser,
     });
   },
 };
