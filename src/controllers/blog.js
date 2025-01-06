@@ -27,7 +27,7 @@ module.exports = {
         */
 
     let customFilter = {};
-    if (req.query?.author && req.query.author === "6757ffcfe5ac66a45aadba94") {
+    if (req.query?.author) {
       customFilter = { userId: req.query.author };
     }
 
