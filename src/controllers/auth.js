@@ -56,7 +56,7 @@ module.exports = {
 
     const verificationToken = signAccessToken(newUser._id);
 
-    const verificationUrl = `${process.env.CLIENT_URL}/auth/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${process.env.LOCAL_CLIENT_URL}/auth/verify-email?token=${verificationToken}`;
 
     const message = signupEmailTemplate(newUser.username, verificationUrl);
 
@@ -110,8 +110,7 @@ module.exports = {
       });
     }
 
-    user.isVerified = true;
-    await user.save({ validateBeforeSave: false });
+    await user.markAsVerified();
 
     res.status(200).json({
       status: "success",
@@ -305,7 +304,7 @@ module.exports = {
     );
 
     // Reset URL with JWT
-    const resetURL = `http://localhost:5173/auth/reset-password/${jwtResetToken}`;
+    const resetURL = `${process.env.CLIENT_URL}/auth/reset-password/${jwtResetToken}`;
 
     const message = forgotPasswordEmailTemplate(
       user.username,

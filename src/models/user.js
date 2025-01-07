@@ -93,14 +93,16 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  // Only run this function if password was actually modified
-  if (!this.isModified("password")) return next();
-
-  // Hash the password with cost of 12
-  this.password = await bcrypt.hash(this.password, 12);
-
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
   next();
 });
+
+userSchema.methods.markAsVerified = async function () {
+  this.isVerified = true;
+  await this.save({ validateBeforeSave: false });
+};
 
 // userSchema.pre(/^find/, function (next) {
 //   this.find({ isActive: true });
