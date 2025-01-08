@@ -56,7 +56,7 @@ module.exports = {
 
     const verificationToken = signAccessToken(newUser._id);
 
-    const verificationUrl = `${process.env.LOCAL_SERVER_URL}/auth/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${process.env.SERVER_URL}/auth/verify-email?token=${verificationToken}`;
 
     const message = signupEmailTemplate(newUser.username, verificationUrl);
 
