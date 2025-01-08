@@ -28,6 +28,7 @@ passport.use(
           user.firstName = user.firstName;
           user.lastName = user.lastName;
           user.image = user.image ? user.image : profile.photos[0].value;
+          user.isVerified = true;
 
           await user.save();
           return done(null, user);
