@@ -56,7 +56,7 @@ module.exports = {
 
     const verificationToken = signAccessToken(newUser._id);
 
-    const verificationUrl = `${process.env.LOCAL_CLIENT_URL}/auth/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${process.env.LOCAL_SERVER_URL}/auth/verify-email?token=${verificationToken}`;
 
     const message = signupEmailTemplate(newUser.username, verificationUrl);
 
@@ -74,48 +74,54 @@ module.exports = {
 
   verifyEmail: async (req, res) => {
     /*
-            #swagger.tags = ["Authentication"]
-            #swagger.summary = "Verify Email"
-            #swagger.description = 'Verify a user’s email address using a token sent via email.'
-            #swagger.parameters["token"] = {
-                in: "query",
-                required: true,
-                description: "Verification token from email.",
-                type: "string"
-            }
-        */
+          #swagger.tags = ["Authentication"]
+          #swagger.summary = "Verify Email"
+          #swagger.description = 'Verify a user’s email address using a token sent via email.'
+          #swagger.parameters["token"] = {
+              in: "query",
+              required: true,
+              description: "Verification token from email.",
+              type: "string"
+          }
+      */
     const { token } = req.query;
+
     if (!token) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Invalid or missing token.",
-      });
+      return res.redirect(
+        `${process.env.CLIENT_URL}/auth/verify-email/success?status=missing-token`
+      );
     }
 
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    let decoded;
+    try {
+      decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return res.redirect(
+        `${process.env.CLIENT_URL}/auth/verify-email/success?status=invalid-token`
+      );
+    }
 
-    const user = await User.findOne({ _id: decoded.id });
+    const user = await User.findOne({
+      _id: decoded.id.toString(),
+    });
 
     if (!user) {
-      return res.status(404).json({
-        status: "fail",
-        message: "User not found.",
-      });
+      return res.redirect(
+        `${process.env.CLIENT_URL}/auth/verify-email/success?status=user-not-found`
+      );
     }
 
     if (user.isVerified) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Email already verified.",
-      });
+      return res.redirect(
+        `${process.env.CLIENT_URL}/auth/verify-email/success?status=already-verified`
+      );
     }
 
     await user.markAsVerified();
 
-    res.status(200).json({
-      status: "success",
-      message: "Email successfully verified!",
-    });
+    return res.redirect(
+      `${process.env.CLIENT_URL}/auth/verify-email/success?status=success`
+    );
   },
 
   login: async (req, res) => {
